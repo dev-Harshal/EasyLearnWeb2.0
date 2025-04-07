@@ -1,0 +1,6 @@
+/* Hide spinners in Chrome, Safari, Edge, Opera for #otpCode */
+#otpCode::-webkit-outer-spin-button,
+#otpCode::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

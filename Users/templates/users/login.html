@@ -1,0 +1,98 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %} {{role}} Login {% endblock title %}
+
+{% block content %}
+
+    <main class="main">
+
+        <section class="container vh-100 d-lg-flex justify-content-center align-items-center">
+
+            <div class="row d-lg-flex justify-content-between align-items-center">
+
+                <div class="d-none d-lg-block col-6">
+                    <img src="{% static 'users/img/'|add:role|lower|add:'_login.png' %}" class="w-100" alt="Login" >
+                </div>
+
+                <div class="col-12 col-lg-6">
+
+                    <div class="row justify-content-lg-center">
+                        <div class="col-12 col-lg-9">
+
+                            <div class="card bg-primary-subtle border border-primary shadow">
+                                
+                                <div class="card-body">
+                                    
+                                    <h5 class="card-title text-dark fs-5 mb-0 pb-2">
+                                        <i class="bi bi-arrow-right-square-fill"></i>
+                                        {% if role != 'Student' %} {{role|upper}} {% endif %} LOG IN.
+                                    </h5>
+
+                                    {% if role == 'Student' %}
+                                        <p class="card-text">
+                                            Skills for your present (and your future). <br>
+                                            <span class="text-primary">Get started with us.</span>
+                                        </p>
+                                    {% else %}
+                                        <p class="card-text">
+                                            <span class="text-primary">Welcome back!<span> <br>
+                                            <span class="text-dark">Please log in to access your staff portal.</span>
+                                        </p>
+                                    {% endif %}
+
+                                    {% include "components/alert.html" %}
+
+                                    <form id="loginForm" class="row g-3" method="post">
+                                        {% csrf_token %}
+
+                                        <input id="role" type="hidden" name="role" value="{{role}}">
+
+                                        <div class="col-12">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input id="email" type="email" class="form-control" name="email" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input id="password" type="password" class="form-control" name="password" required>
+                                        </div>
+
+                                        <div id="otpSection" class="d-none col-12">
+                                            <label for="otpCode" class="form-label">Verify OTP</label>
+                                            <div class="input-group">
+                                                <input id="otpCode" type="number" class="form-control" name="otp_code" required disabled>
+                                                <button id="resendBtn" type="button" class="btn btn-secondary" disabled>Resend <span id="resendTimer"></span></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 text-center">
+                                            <button id="loginBtn" type="submit" class="btn btn-primary">LOGIN</button>
+                                            <button id="verifyBtn" type="submit" class="d-none btn btn-primary" disabled>VERIFY</button>
+                                        </div>
+                                    </form>
+
+                                    {% if role == 'Student' %}
+                                        <div class="text-center mt-3">
+                                            <p class="card-text">Create new account? 
+                                                <a href="{% url "register-view" %}">Register.</a>
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                        
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+{% endblock content %}

@@ -1,0 +1,38 @@
+
+<div class="col-12 question-item" data-question-number="${order}">
+    <div class="row">
+
+        <div class="col-11">
+
+            <div class="row g-3 justify-content-end">
+                <div class="col-12">
+                    <div class="row">
+                        <label class="col-sm-2 col-form-label question-label">(${order}) Question :</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" name="question[]" required>
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" name="mark[]" placeholder="Marks" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="col-10">
+                    <div class="row g-2">
+                        ${createAnswerField(order, 1)}
+                        ${createAnswerField(order, 2)}
+                        ${createAnswerField(order, 3)}
+                        ${createAnswerField(order, 4)}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="col-1 text-center">
+            <i class="bi bi-trash text-danger fs-5 remove-question"></i>
+        </div>
+    </div>
+
+</div>

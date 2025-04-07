@@ -1,0 +1,123 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %} Create Teacher {% endblock title %}
+
+{% block main %}
+
+<main id="main" class="main">
+
+    <section class="section">
+
+        <div class="row">
+            <div class="col-12">
+    
+                <div class="card bg-transparent">
+                    <div class="card-body">
+    
+                        <h5 class="card-title text-center">
+                            <i class="bi bi-person-fill-up"></i>
+                            CREATE TEACHER PROFILE
+                        </h5>
+
+                        <div class="row justify-content-center">
+                            <div class="col col-md-6">
+                            
+                            <form id="createTeacherForm" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <div class="card">
+
+                                    <div class="card-header fw-bold text-dark text-center bg-primary-subtle">
+                                        PERSONAL INFORMATION
+                                    </div>
+
+                                    <div class="card-body pt-4">
+
+                                        {% include "components/alert.html" %}
+
+                                        <div class="row g-3">
+                                            <div class="col-12 col-md-6">
+                                                <label for="firstName" class="form-label">First Name</label>
+                                                <input id="firstName" type="text" class="form-control" name="first_name" required>
+                                            </div>
+    
+                                            <div class="col-12 col-md-6">
+                                                <label for="lastName" class="form-label">Last Name</label>
+                                                <input id="lastName" type="text" class="form-control" name="last_name" required>
+                                            </div>
+    
+                                            <div class="col-12">
+                                                <label for="phoneNumber" class="form-label">Phone Number</label>
+                                                <input id="phoneNumber" type="text" class="form-control" name="phone_number" pattern="^\d{10}$" title="Enter valid 10 digit Phone Number" required>
+                                            </div>
+    
+                                            <div class="col-12 col-md-6">
+                                                <label for="experience" class="form-label">Experience</label>
+                                                <input id="experience" type="number" class="form-control" name="experience" min="0.5" step="0.5" required>
+                                            </div>
+    
+                                            <div class="col-12 col-md-6">
+                                                <label for="department" class="form-label">Department</label>
+                                                <select id="department" class="form-select" name="department" required>
+                                                    <option value="">choose department</option>
+                                                    <option value="Computer Engineering">Computer Engineering</option>
+                                                    <option value="Civil Engineering">Civil Engineering</option>
+                                                    <option value="Electronics Engineering">Electronics Engineering</option>
+                                                    <option value="Management Studies">Management Studies</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label for="profilePhoto" class="form-label">Profile Photo</label>
+                                                <input id="profilePhoto" type="file" class="form-control" name="profile_photo"  accept="image/*" required>
+                                            </div>
+    
+                                        </div>
+
+                                    </div>
+
+                                    <div class="card-header fw-bold text-dark text-center bg-primary-subtle">
+                                        AUTHENTICATION INFORMATION
+                                    </div>
+
+                                    <div class="card-body pt-4">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <label for="email" class="form-label">Email</label>
+                                                <input id="email" type="email" class="form-control" name="email" required>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label for="password" class="form-label">Password</label>
+                                                <input id="password" type="password" class="form-control" name="password" required>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                                <input id="confirmPassword" type="password" class="form-control" name="confirm_password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-footer text-end">
+                                        <button class="btn btn-primary">CREATE PROFILE</button>
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    
+    </section>
+
+</main>
+
+{% endblock main %}

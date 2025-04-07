@@ -1,0 +1,115 @@
+{% extends "teacher/base_site.html" %}
+
+{% block title %} Exam Details {% endblock title %}
+
+{% block main %}
+
+    <main id="main" class="main">
+
+        <section class="section">
+
+            <div class="row">
+        
+                <div class="col-12">
+        
+                    <div class="card">
+        
+                        <div class="card-body">
+        
+                            <h5 class="card-title mb-0 pb-2 fs-5 d-flex justify-content-between">
+                                {{exam.course.title}} Exam
+                                <span class="fs-5 text-dark">Total Marks: 70</span>
+                            </h5>
+                            <p class="card-text fs-5">Kindly add the required questions for the course examination below:</p>
+
+
+                            {% include "components/alert.html" %}
+
+                            <form id="createQuestionForm" method="post">
+                                {% csrf_token %}
+
+                                <input id="courseId" type="hidden" name="course_id" value="{{exam.course.id}}">
+
+                                <div id="examContainer" class="row justify-content-center g-3">
+                                    
+                                    {% for question in exam.questions.all %}
+
+                                        <div class="col-11 question-item" data-prefix="old_question" data-question-number="{{forloop.counter}}">
+                                            <div class="row align-items-center">
+                                
+                                                <div class="col-11">
+                                
+                                                    <div class="row g-3 justify-content-end">
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 col-form-label question-label">({{forloop.counter}}) Question :</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="hidden" class="form-control" name="old_question_id[]" value="{{question.id}}">
+                                                                    <textarea class="form-control" name="old_question[]" required>{{question.text}}</textarea>
+                                                                    <input type="hidden" class="form-control" name="old_question[order][]" value="{{forloop.counter}}">
+                                                                </div>
+                                                                <div class="col-sm-2">
+                                                                    <input type="number" class="form-control" name="old_mark[]" value="{{question.mark}}" placeholder="Marks" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                
+                                                        <!-- Options -->
+                                                        <div class="col-10">
+                                                            <div class="row g-2">
+                                                               
+                                                                {% for answer in question.answers.all  %}
+
+                                                                <div class="col-6">
+                                                                    <div class="row">
+                                                                        <label class="col-sm-2 col-form-label">{{forloop.counter}} :</label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="hidden" class="form-control" name="old_question[answer_id][{{forloop.parentloop.counter}}][]" value="{{answer.id}}">
+                                                                            <input type="text" class="form-control" name="old_question[answer][{{forloop.parentloop.counter}}][]" value="{{answer.text}}" required>
+                                                                        </div>
+                                                                        <div class="col-sm-2">
+                                                                            <input type="radio" name="old_question[is_correct][{{forloop.parentloop.counter}}][]" value="{{forloop.counter}}" class="form-check-input" {% if answer.is_correct %} checked {% endif %} required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {% endfor %}
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                
+                                                <div class="col-1 text-end">
+                                                    <i class="bi bi-trash text-danger fs-5 remove-question"></i>
+                                                </div>
+                                            </div>
+                                
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                                <div class="text-center mt-3">
+                                    <button type="submit" class="btn btn-primary">SAVE QUESTIONS</button>
+                                </div>
+
+                            </form>
+
+                            <button id="addQuestion" class="btn btn-success">+ Questions</button>
+        
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+            </div>
+        
+        </section>
+
+    </main>
+
+{% endblock main %}

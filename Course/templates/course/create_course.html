@@ -1,0 +1,82 @@
+{% extends "teacher/base_site.html" %}
+
+{% block title %} Create Course {% endblock title %}
+
+{% block main %}
+
+    <main id="main" class="main">
+
+        <section class="section">
+
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="card bg-transparent">
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                <i class="bi bi-bookmark-plus-fill"></i>
+                                CREATE COURSE
+                            </h5>
+
+                            <div class="card col-12 col-md-9 mx-auto">
+
+                                <div class="card-header bg-primary-subtle text-dark fw-bold">
+                                    First, let's find out what type of course you're making.
+                                </div>
+
+                                <div class="card-body p-4">
+
+                                    {% include "components/alert.html" %}
+
+                                    <form id="createCourseForm" method="post" class="row g-3" enctype="multipart/form-data">
+                                        {% csrf_token %}
+
+                                        <div class="col col-md-6">
+                                            <label for="thumbnail" class="form-label">Course Thumbnail</label>
+                                            <input id="thumbnail" type="file" class="form-control" name="thumbnail" accept="image/*" required>
+                                        </div>
+
+                                        <div class="col col-md-6">
+                                            <label for="category" class="form-label">Course Category</label>
+                                            <select id="category" class="form-select" name="category" required>
+                                                <option value="">choose category</option>
+                                                <option value="Frontend Web Development">Frontend Web Development</option>
+                                                <option value="Backend Web Development">Backend Web Development</option>
+                                                <option value="Data Science">Data Science</option>
+                                                <option value="Mobile App Development">Mobile App Development</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="title" class="form-label">Title</label>
+                                            <input id="title" type="text" class="form-control" name="title" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-floating">
+                                                <textarea id="description" class="form-control" name="description" placeholder="Course Description" style="height: 100px"></textarea>
+                                                <label for="description">Course Description</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 text-center">
+                                            <button type="submit" class="btn btn-primary w-50">CREATE COURSE</button>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+        
+    </main>
+
+{% endblock main %}

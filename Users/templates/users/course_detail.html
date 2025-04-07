@@ -1,0 +1,106 @@
+{% extends "users/base_site.html" %}
+{% load static %}
+
+{% block title %} Course Details {% endblock title %}
+
+{% block main %}
+
+<main class="main">
+
+
+    <section class="section">
+
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title fs-4 text-center">
+                            <i class="bi bi-bookmark-star-fill"></i>
+                            COURSE DETAILS
+                        </h5>
+                            
+
+                        {% include "components/alert.html" %}
+
+                        <div class="row">
+
+                            <div class="col-12 col-md-6">
+                                <img src="{{course.thumbnail.url}}" class="img-fluid h-100" alt="Thumbnail">
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <h5 class="card-title fs-3 mb-0 pb-2">{{course.title}}</h5>
+                                <p class="card-text fs-5 fw-medium">{{course.description}}</p>
+
+                                <p class="card-text mb-0 pb-2"><span class="fw-semibold">Category: </span> {{course.category}}</p>
+                                <p class="card-text"><span class="fw-semibold">Created On: </span>{{course.created_date}}</p>
+
+                                <div class="row justify-content-center">
+                                    <a href="" class="btn btn-success w-75">EXAMINATION</a>
+                                </div>
+                            </div>
+
+                        </div>  
+
+                        <h5 class="card-title fs-5 text-center">
+                            <i class="bi bi-window-stack"></i>
+                            COURSE CURRICULUM
+                        </h5>
+
+                        
+                        <div class="row justify-content-center">
+
+                            <div class="col-9 border border-dark shadow pt-4 pb-2">
+
+                                {% for section in course.curriculum.sections.all %}
+                                    <div class="accordion mb-3" id="accordionExample{{section.id}}">
+                                        <div class="accordion-item border border-dark">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button bg-primary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{{section.id}}" aria-expanded="false" aria-controls="collapseOne">
+                                                    Section {{forloop.counter}}: {{section.title}}
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne{{section.id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample{{section.id}}">
+                                                <div class="accordion-body">
+                                                    
+                                                    {% for item in section.curriculum_items.all %}
+                                                    
+                                                    {% if item.type == 'lesson' %}
+                                                        <p class="card-text">{{forloop.counter}}: <i class="bi bi-play-btn"></i> {{item.lesson.title}}</p> 
+                                                    {% else %}
+                                                        <p class="card-text">{{forloop.counter}}: <i class="bi bi-patch-question-fill"></i> Quiz</p> 
+                                                    {% endif %}
+                                                    
+                                                    {% endfor %}
+        
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                <div class="col-12 text-center">
+                                    <a href="" class="btn btn-primary">VIEW COURSE</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+
+</main>
+
+{% endblock main %}

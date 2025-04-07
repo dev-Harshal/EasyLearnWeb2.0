@@ -1,0 +1,111 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{% url "admin:index-view" %}" class="logo">
+                <span class="text-dark">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    <span class="text-primary">EASY</span>
+                    LEARN
+                </span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        {% if request.user.profile_photo %}
+                            <img src="{{request.user.profile_photo.url}}" alt="Profile" class="rounded-circle" style="width:35px; height:35px; object-position: center;">
+                        {% else %}
+                            <img src="{% static "users/img/profile.jpg" %}" alt="Profile" class="rounded-circle border border-secondary" style="width:27px; height:27px;">
+                        {% endif %}
+                        <span class="d-none d-md-block dropdown-toggle fs-5 ps-2">{{request.user.first_name}} {{request.user.last_name.0}}</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+
+                        <li class="dropdown-header">
+                            <h6>{{request.user.first_name}} {{request.user.last_name}}</h6>
+                            <span>{{request.user.email}}</span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url "admin:profile-view" %}">
+                                <i class="bi bi-person"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url "logout-view" %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </li>
+                        
+                    </ul>
+
+                </li>
+
+            </ul>
+        </nav>
+
+    </header>
+
+    <aside id="sidebar" class="sidebar bg-primary-subtle">
+        <ul class="sidebar-nav" id="sidebar-nav">
+
+            <li class="nav-item mb-4">
+                <a href="{% url "admin:index-view" %}" class="nav-link {% if request.resolver_match.url_name == 'index-view' %} active bg-dark {% endif %}">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+
+            <li class="nav-heading">TEACHER</li>
+
+            <li class="nav-item mb-4">
+                <a href="{% url "admin:create-teacher-view" %}" class="nav-link {% if request.resolver_match.url_name == 'create-teacher-view' %} active bg-dark {% endif %} collapsed">
+                    <i class="bi bi-person-video3"></i>
+                    <span>ADD TEACHER</span>
+                </a>
+            </li>
+
+            <li class="nav-item mb-4">
+                <a href="{% url "admin:list-users-view" 'Teacher' %}" class="nav-link {% if request.resolver_match.url_name == 'list-users-view' and request.resolver_match.kwargs.role == 'Teacher' %}active bg-dark{% endif %}">
+                    <i class="bi bi-person-lines-fill"></i>
+                    <span>LIST TEACHERS</span>
+                </a>
+            </li>
+
+            <li class="nav-heading">STUDENT</li>
+
+            <li class="nav-item">
+                <a href="{% url "admin:list-users-view" 'Student' %}" class="nav-link {% if request.resolver_match.url_name == 'list-users-view' and request.resolver_match.kwargs.role == 'Student' %}active bg-dark{% endif %}">
+                    <i class="bi bi-person-lines-fill"></i>
+                    <span>LIST STUDENTS</span>
+                </a>
+            </li>
+
+        </ul>
+    </aside>
+
+    {% block main %}{% endblock main %}
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+{% endblock content %}

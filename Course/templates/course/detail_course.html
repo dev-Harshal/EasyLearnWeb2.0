@@ -1,0 +1,314 @@
+{% extends "teacher/base_site.html" %}
+
+{% block title %} Course Details {% endblock title %}
+
+{% block main %}
+
+    <main id="main" class="main">
+
+        <section class="section">
+
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title">
+                                    <i class="bi bi-bookmark-star-fill"></i>
+                                    COURSE DETAILS PAGE
+                                </h5>
+                                
+                                <span>
+                                    <a href="{% url "course:update-course-view" course.id %}" class="btn btn-secondary">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                </span>
+                            </div>
+
+                            {% include "components/alert.html" %}
+
+                            <div class="row">
+
+                                <div class="col-12 col-md-6">
+                                    <img src="{{course.thumbnail.url}}" class="img-fluid h-100" alt="Thumbnail">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <h5 class="card-title fs-3 mb-0 pb-2">{{course.title}}</h5>
+                                    <p class="card-text fs-5 fw-medium">{{course.description}}</p>
+
+                                    <p class="card-text mb-0 pb-2"><span class="fw-semibold">Category: </span> {{course.category}}</p>
+                                    <p class="card-text"><span class="fw-semibold">Created On: </span>{{course.created_date}}</p>
+
+                                    <div class="row justify-content-center">
+                                        <a href="{% url "course:detail-exam-view" course.id %}" class="btn btn-success w-75">EXAMINATION</a>
+                                    </div>
+                                </div>
+
+                            </div>  
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <section class="section">
+
+            <div class="row justify-content-center">
+                <div class="col-12">
+
+                    <div class="card">
+
+                        <div class="card-header bg-primary-subtle pt-0">
+                            <h5 class="card-title mb-0 pb-2">
+                                <i class="bi bi-list-check"></i>
+                                COURSE CURRICULUM
+                            </h5>
+                            <p class="card-text fw-semibold text-dark">Start putting together your course by creating sections, lectures, and quizzes.</p>
+                        </div>
+
+                        <div class="card-body pt-4">
+                        
+                            <form id="saveCurriculumForm" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <input id="courseId" type="hidden" name="course_id" value="{{course.id}}">
+
+                                <div id="sectionContainer" class="row justify-content-center">
+
+                                    {% for section in course.curriculum.sections.all  %}
+
+                                        <div class="col-11 section-item" data-prefix="old_sections" data-section-number="{{forloop.counter}}">
+
+                                            <div class="card border border-dark shadow">
+                                                
+                                                <div class="card-header border-bottom border-dark bg-secondary-subtle">
+                                
+                                                    <div class="row align-items-center">
+                                
+                                                        <div class="col-10">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 col-form-label text-dark fw-semibold section-label">Section ({{forloop.counter}}) :</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="hidden" class="form-control" name="old_section_id[]" value="{{section.id}}">
+                                                                    <input type="text" class="form-control" name="old_section_title[]" value="{{section.title}}" required>
+                                                                    <input type="hidden" class="form-control" name="old_section_order[]" value="{{forloop.counter}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="col-2 text-end">
+                                                            <i class="bi bi-trash text-danger fs-5 remove-section"></i>
+                                                        </div>
+                                
+                                                    </div>
+                                
+                                                </div>
+                                
+                                                <div class="card-body pt-4">
+                                
+                                                    <div class="row g-3 item-container">
+                                                        
+                                                        {% for item in section.curriculum_items.all  %}
+
+                                                            {% if item.type == 'lesson' %}
+
+                                                                <div class="col-12 item">
+
+                                                                    <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][item_id][]" value="{{item.id}}">
+                                                                    <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][type][]" value="lesson">
+                                                                    <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][order][]" value="{{forloop.counter}}">
+                                                        
+                                                                    <div class="row align-items-center video-item">
+                                                        
+                                                                        <!-- Video Item Fields -->
+                                                                        <div class="col-11">
+                                                        
+                                                                            <div class="row g-3 justify-content-end">
+                                                                                
+                                                                                <!-- Video Item Title Field -->
+                                                                                <div class="col-12">
+                                                        
+                                                                                    <div class="row">
+                                                                                        <label class="col-sm-3 col-form-label video-label">({{forloop.counter}}) Video Title :</label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][{{forloop.counter}}][video_id][]" value="{{item.lesson.id}}" required>
+                                                                                            <input type="text" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][{{forloop.counter}}][title][]" value="{{item.lesson.title}}" required>
+                                                                                        </div>
+                                                                                    </div>
+                                                        
+                                                                                </div>
+                                                        
+                                                                                <!-- Video Item Files Fields -->
+                                                                                <div class="col-9">
+                                                        
+                                                                                    <div class="row">
+                                                                                        <div class="col-6">
+                                                                                            <label class="form-label">Video File :</label>
+                                                                                            <input type="file" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][{{forloop.counter}}][video_file][]" >
+                                                                                            <a href="{{item.lesson.video_file.url}}" target="_blank">current video</a>
+                                                                                        </div>
+                                                        
+                                                                                        <div class="col-6">
+                                                                                            <label class="form-label">Note File (Optional) :</label>
+                                                                                            <input type="file" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][{{forloop.counter}}][note_file][]">
+                                                                                            {% if item.lesson.note_file %}
+                                                                                            <a href="{{item.lesson.note_file.url}}" target="_blank">current file</a>
+                                                                                            {% endif %}
+                                                                                        </div>    
+                                                                                    </div>
+                                                        
+                                                                                </div>
+                                                        
+                                                                            </div>
+                                                        
+                                                                        </div>
+                                                                        
+                                                                        <!-- Delete Video Item -->
+                                                                        <div class="col-1 text-end">
+                                                                            <i class="bi bi-trash text-danger fs-5 remove-item"></i>
+                                                                        </div>
+                                                        
+                                                                    </div>
+                                                                    
+                                                                    <hr>
+                                                                </div>
+                                                            
+                                                            {% else %}
+
+                                                            <div class="col-12 item">
+
+                                                                <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][item_id][]" value="{{item.id}}">
+                                                                <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][type][]" value="quiz" required>
+                                                                <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][order][]" value="{{forloop.counter}}" required>
+                                                    
+                                                                <div class="row align-items-center quiz-item">
+                                                    
+                                                                    <!-- Quiz Item Fields -->
+                                                                    <div class="col-11">
+                                                    
+                                                                        <div class="row g-3 justify-content-end">
+                                                    
+                                                                            <!-- Quiz Item Question Field -->
+                                                                            <div class="col-12">
+                                                    
+                                                                                <div class="row">
+                                                                                    <label class="col-sm-3 col-form-label quiz-label">({{forloop.counter}}) Quiz :</label>
+                                                                                    <div class="col-sm-9">
+                                                                                        <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][{{forloop.counter}}][quiz_id][]" value="{{item.quiz.id}}" required>
+                                                                                        <input type="text" class="form-control" name="old_sections[{{forloop.parentloop.counter}}][items][{{forloop.counter}}][question][]" value="{{item.quiz.question}}" required>
+                                                                                    </div>
+                                                                                </div>
+                                                    
+                                                                            </div>
+                                                    
+                                                                            <!-- Quiz Item Option Fields -->
+                                                                            <div class="col-9">
+                                                                                
+                                                                                <div class="row g-2">
+
+                                                                                    {% for option in item.quiz.quiz_options.all %}
+
+                                                                                    <div class="col-6">
+
+                                                                                        <div class="row">
+                                                                            
+                                                                                            <label class="col-sm-3 col-form-label">({{forloop.counter}}) :</label>
+                                                                                            <div class="col-sm-7">
+                                                                                                <input type="hidden" class="form-control" name="old_sections[{{forloop.parentloop.parentloop.counter}}][items][{{forloop.parentloop.counter}}][options][{{forloop.counter}}][option_id][]" value="{{option.id}}" required>
+                                                                                                <input type="text" class="form-control" name="old_sections[{{forloop.parentloop.parentloop.counter}}][items][{{forloop.parentloop.counter}}][options][{{forloop.counter}}][text][]" value="{{option.text}}" required>
+                                                                                            </div>
+                                                                                            <div class="col-sm-2">
+                                                                                                <input type="radio" name="old_sections[{{forloop.parentloop.parentloop.counter}}][items][{{forloop.parentloop.counter}}][is_correct][]" value="{{forloop.counter}}" class="form-check-input" {% if option.is_correct %} checked {% endif %} required>
+                                                                                            </div>
+                                                                                        </div>
+                                                                            
+                                                                                    </div>
+
+                                                                                    {% endfor %}
+
+                                                                                </div>
+                                                    
+                                                                            </div>
+                                                    
+                                                                        </div>
+                                                    
+                                                                    </div>
+                                                    
+                                                                    <!-- Delete Quiz Item -->
+                                                                    <div class="col-1 text-end">
+                                                                        <i class="bi bi-trash text-danger fs-5 remove-item"></i>
+                                                                    </div>
+                                                    
+                                                                </div>
+                                                    
+                                                                <hr>
+                                                            </div>
+
+                                                            {% endif %}
+
+                                                        {% endfor %}
+
+                                                    </div>
+                                
+                                                    <div class="row justify-content-end">
+                                
+                                                        <div class="col-auto">
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle add-item-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="bi bi-plus"></i> Add Item
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a class="dropdown-item addItem" href="#" data-type="video" data-section="{{forloop.counter}}">Video</a></li>
+                                                                    <li><a class="dropdown-item addItem" href="#" data-type="quiz" data-section="{{forloop.counter}}">Quiz</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                
+                                                    </div>
+                                
+                                                </div>
+                                
+                                            </div>
+                                
+                                        </div>
+                                    
+                                    {% endfor %}
+
+
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">SAVE CURRICULUM</button>
+                                </div>
+                            </form>
+    
+                        </div>
+                    
+                        <div class="card-footer text-end">
+                            <button id="addSection" class="btn btn-success btn-sm">
+                                <i class="bi bi-plus"></i>
+                                Section
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+{% endblock main %}
+
+
+

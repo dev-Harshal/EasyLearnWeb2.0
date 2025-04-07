@@ -1,0 +1,62 @@
+{% extends "teacher/base_site.html" %}
+
+{% block title %} Courses List {% endblock title %}
+
+{% block main %}
+
+    <main id="main" class="main">
+
+        <section class="section">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title text-center">
+                                <i class="bi bi-window-stack"></i>
+                                ALL COURSES
+                            </h5>
+
+                            {% include "components/alert.html" %}
+                            
+                            <div class="row row-cols-2 row-cols-lg-3 g-2 g-lg-3">
+
+                                {% for course in courses %}
+
+                                    <div class="col">
+                                        <div class="card h-100">
+
+                                            <img src="{{course.thumbnail.url}}" class="card-img-top h-100" alt="Course Thumbnail">
+
+                                            <div class="card-body border border-dark shadow">
+                                                <h5 class="card-title">{{course.title}} <br>
+                                                    <span>@{{course.created_date}}<span>
+                                                </h5>
+
+                                                <p class="card-text">
+                                                    {{course.description|truncatechars:68}}
+                                                </p>
+                                                
+                                                <a href="{% url "course:detail-course-view" course.id %}" class="btn btn-primary w-100">
+                                                    <i class="bi bi-gear"></i>
+                                                    Manage Course
+                                                </a>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+{% endblock main %}

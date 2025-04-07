@@ -1,0 +1,193 @@
+{% extends "teacher/base_site.html" %}
+{% load static %}
+
+{% block title %} Profile {% endblock title %}
+
+{% block main %}
+
+    <main id="main" class="main">
+
+        <section class="section profile">
+
+            <div class="row">
+
+                <div class="col-12">
+                    <div class="card bg-transparent">
+                        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+                            {% if request.user.profile_photo %}
+                                <img src="{{user.profile_photo.url}}" alt="Profile" class="rounded-circle" style="width:120px; height:120px; object-position: center;">
+                            {% else %}
+                                <img src="{% static "users/img/profile.jpg" %}" alt="Profile" class="rounded-circle border" style="width:120px; height:120px; object-position: center;">
+                            {% endif %}
+                            
+                            <h2>{{request.user.first_name}} {{request.user.last_name}}</h2>
+                            <p>{{request.user.role}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body pt-3">
+
+                            <!-- Bordered Tabs -->
+                            <ul class="nav nav-tabs nav-tabs-bordered">
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                                </li>
+                
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                                </li>
+                
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content pt-2">
+                                
+                                {% include "components/alert.html" %}
+
+                                <!-- Profile Details -->
+                                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                
+                                    <h5 class="card-title">{{request.user.role|upper}} PROFILE DETAILS</h5>
+                
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                                        <div class="col-lg-9 col-md-8">{{request.user.first_name}} {{request.user.last_name}}</div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Email</div>
+                                        <div class="col-lg-9 col-md-8">{{request.user.email}}</div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Phone Number</div>
+                                        <div class="col-lg-9 col-md-8">(+91) {{request.user.profile.phone_number}}</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Experince</div>
+                                        <div class="col-lg-9 col-md-8">{{request.user.profile.experience}}</div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Department</div>
+                                        <div class="col-lg-9 col-md-8">{{request.user.profile.department}}</div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Role</div>
+                                        <div class="col-lg-9 col-md-8">{{request.user.role|title}}</div>
+                                    </div>
+                
+                                </div>
+                                
+                                <!-- End Profile Edit Form -->
+                                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                                    <form id="profileForm" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="row mb-3">
+                                            <label for="id" class="col-md-4 col-lg-3 col-form-label">ID</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="userId" type="text" class="form-control" name="user_id" value="{{request.user.id}}" disabled>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="profilePhoto" class="col-md-4 col-lg-3 col-form-label">Profile Photo</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="profilePhoto" type="file" class="form-control" name="profile_photo">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="firstName" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="firstName" type="text" class="form-control" name="first_name" value="{{request.user.first_name}}" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="lastName" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="lastName" type="text" class="form-control" name="last_name" value="{{request.user.last_name}}" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="email" type="email" class="form-control" name="email" value="{{request.user.email}}" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="phoneNumber" class="col-md-4 col-lg-3 col-form-label">Phone Number</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="phoneNumber" type="text" class="form-control" name="phone_number" value="{{request.user.profile.phone_number}}" pattern="^\d{10}$" title="Enter valid 10 digit Phone Number" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <input id="role" type="hidden" name="role" value="{{request.user.role}}">
+                                        </div>	
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">SAVE CHANGES</button>
+                                            <a href="{% url "teacher:index-view" %}" class="btn btn-danger">CLOSE</a>
+                                        </div>
+                                    </form>
+                                </div> 
+                                
+                                <!-- Change Password Form -->
+                                <div class="tab-pane fade pt-3" id="profile-change-password">
+                                    <form id="changePasswordForm" method="post">
+                                        {% csrf_token %}
+                                        
+                                        <div class="row mb-3">
+                                            <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="currentPassword" type="password" class="form-control" name="current_password" required>
+                                            </div>
+                                        </div>
+                    
+                                        <div class="row mb-3">
+                                            <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="newPassword" type="password" class="form-control" name="new_password" required>
+                                            </div>
+                                        </div>
+                    
+                                        <div class="row mb-3">
+                                            <label for="confirmPassword" class="col-md-4 col-lg-3 col-form-label">Confirm Password</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input id="confirmPassword" type="password" class="form-control" name="confirm_password" required>
+                                            </div>
+                                        </div>
+                    
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">CHANGE PASSWORD</button>
+                                            <a href="{% url "teacher:index-view" %}" class="btn btn-danger">CLOSE</a>
+                                        </div>
+                                    </form>
+                                </div>
+            
+                            </div>
+            
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+{% endblock main %}  

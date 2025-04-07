@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %} List {{role}} {% endblock title %}
+
+{% block main %}
+    <main id="main" class="main">
+
+        <section class="section">
+
+            <div class="row justify-content-center">
+                <div class="col-12">
+
+                    <div class="card">
+                        <div class="card-body">
+
+                            <h5 class="card-title text-center">
+                                <i class="bi bi-person-lines-fill"></i>
+                                LIST {{role|upper}} PROFILE'S
+                            </h5>
+
+                            {% include "components/alert.html" %}
+
+                            <table class="table datatable">
+
+                                <thead>
+                                    <tr>
+                                        <th>#ID</th>
+                                        <th class="d-none d-lg-table-cell"><b>F</b>ULL NAME</th>
+                                        <th>EMAIL</th>
+                                        {% if role != "Student" %}
+                                            <th class="d-none d-lg-table-cell">PHONE NUMBER</th>
+                                            <th class="d-none d-lg-table-cell">DEPARTMENT</th>
+                                        {% else %}
+                                            <th class="d-none d-lg-table-cell">INSTITUTE</th>
+                                        {% endif %}
+                                        <th>EDIT</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{user.id}}</td>
+                                            <td class="d-none d-lg-table-cell">{{user.first_name}} {{user.last_name}}</td>
+                                            <td>{{user.email}}</td>
+                                            {% if role != "Student" %}
+                                                <td class="d-none d-lg-table-cell">{{user.profile.phone_number}}</td>
+                                                <td class="d-none d-lg-table-cell">{{user.profile.department}}</td>
+                                            {% else %}
+                                                <td class="d-none d-lg-table-cell">{{user.institute}}</td>
+                                            {% endif %}
+                                            <td>
+                                                {% if role == 'Teacher' %}
+                                                    <a href="{% url "admin:update-teacher-view" user.id %}" class="btn btn-primary">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                {% endif %}
+
+                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#verticalycentered{{user.id}}">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+
+                                                <div class="modal fade" id="verticalycentered{{user.id}}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">CONFIRM DELETE</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+
+                                                            <div class="modal-body text-center">
+                                                                Are sure you want to delete ? <br>
+                                                                {% if user.profile_photo %}
+                                                                    <img src="{{user.profile_photo.url}}" alt="Profile" class="rounded-circle" style="width:35px; height:35px; object-fit:cover; object-position:center;">
+                                                                {% endif %}
+                                                                <strong>{{user.first_name}} {{user.last_name}}</strong>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                                                                <a href="{% url "delete-user-view" user.id %}" class="btn btn-danger">DELETE</a>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+{% endblock main %}

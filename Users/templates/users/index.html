@@ -1,0 +1,111 @@
+{% extends "users/base_site.html" %}
+{% load static %}
+
+{% block title %} Home {% endblock title %}
+
+{% block main %}
+    <div id="carouselExampleFade" class="d-none d-lg-block carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item ratio ratio-21x9 active">
+                <img src="{% static "users/img/carosuel_1.jpg" %}" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item ratio ratio-21x9">
+                <img src="{% static "users/img/carosuel_2.jpg" %}" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item ratio ratio-21x9">
+                <img src="{% static "users/img/carosuel_3.jpg" %}" class="d-block w-100" alt="..." >
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- ABOUT US -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+
+                    <strong class="d-inline-block mb-2 text-primary-emphasis">EASY <span class="text-dark">LEARN</span></strong> 
+                    <h3 class="mb-0">Skills that drive you forward</h3>
+
+                    <p class="card-text">Technology and the world of work change fast — with us, you’re faster. Get the skills to achieve goals and stay competitive.</p>
+                    <p class="card-text d-none d-lg-block">Take control of your future with online courses that deliver practical, professional skills. Prepare for certification exams in IT, Project Management, and more ...</p>
+                    <p class="card-text d-none d-lg-block">Get the top skills that others are using to advance their careers.</p>
+                    <p class="card-text d-none d-lg-block">Choose from many topics, skill levels, and languages. Shop thousands of high-quality on-demand online courses.</p>
+                    <p class="card-text d-none d-lg-block">Free courses to achieve your goals Learn new skills, on us.</p>
+
+                </div>
+
+                <div class="col-5 d-none d-lg-block">
+                    <img src="{% static "users/img/about.jpg" %}" class="d-block w-100" alt="...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <h5 class="card-title fs-5 text-center">
+                        <i class="bi bi-window-stack"></i>
+                        RECENTLY ADDED COURSES
+                    </h5>
+
+                    <div class="row">
+
+                        {% for course in recent_courses %}
+                            <div class="col-4">
+
+                                <div class="card h-100">
+
+                                    <img src="{{course.thumbnail.url}}" class="card-img-top h-100" alt="Course Thumbnail">
+
+                                    <div class="card-body border border-dark shadow">
+                                        <h5 class="card-title">{{course.title}} <br>
+                                            <span>@{{course.created_date}}<span>
+                                        </h5>
+
+                                        <p class="card-text">
+                                            {{course.description|truncatechars:68}}
+                                        </p>
+                                        
+                                        <a href="{% url "course-detail-view" course.id %}" class="btn btn-primary w-100">
+                                            EXPLORE COURSE
+                                        </a>
+                                    </div>
+                                    
+                                </div>
+
+
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    
+
+
+{% endblock main %}
