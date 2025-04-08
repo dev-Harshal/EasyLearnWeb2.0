@@ -11,5 +11,5 @@ urlpatterns = [
     path('delete/<int:user_id>/', delete_user_view, name="delete-user-view"),
 
 
-    path('course/detail/<int:course_id>/', course_detail_view, name='course-detail-view')
+    path('course/details/<int:course_id>/', course_detail_view, name='course-details-view')
 ]
