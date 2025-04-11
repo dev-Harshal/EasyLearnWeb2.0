@@ -101,3 +101,17 @@ class Answer(models.Model):
 
     class Meta:
         db_table = 'Answers Table'
+
+class WatchedContent(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(User, related_name='watched_contents', on_delete=models.CASCADE)
+    item = models.ForeignKey(CurriculumItem, related_name='watched_contents', on_delete=models.CASCADE)
+
+
+class Result(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(User, related_name='results', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, related_name='results', on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, null=False, blank=False)
+    obtained_marks = models.IntegerField(null=False, blank=False, default=0)
+    

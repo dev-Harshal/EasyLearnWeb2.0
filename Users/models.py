@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator
 from Users.services import *
+
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -54,5 +55,6 @@ class Profile(models.Model):
 
     class Meta:
         db_table = 'Profiles Table'
+
 
 

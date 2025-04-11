@@ -7,7 +7,6 @@
 
 <main class="main">
 
-
     <section class="section">
 
         <div class="row">
@@ -38,8 +37,9 @@
                                 <p class="card-text mb-0 pb-2"><span class="fw-semibold">Category: </span> {{course.category}}</p>
                                 <p class="card-text"><span class="fw-semibold">Created On: </span>{{course.created_date}}</p>
 
-                                <div class="row justify-content-center">
-                                    <a href="" class="btn btn-success w-75">EXAMINATION</a>
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url "exam-view" course.id %}" class="btn btn-success{% if not completed %}disabled{% endif %}">EXAMINATION</a>
+                                    <a href="" class="btn btn-primary {% if not locked %}disabled{% endif %}">CERTIFICATE</a>
                                 </div>
                             </div>
 
@@ -69,9 +69,66 @@
                                                     {% for item in section.curriculum_items.all %}
                                                     
                                                     {% if item.type == 'lesson' %}
-                                                        <p class="card-text">{{forloop.counter}}: <i class="bi bi-play-btn"></i> {{item.lesson.title}}</p> 
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input toggleWatched" type="checkbox" data-value="{{item.id}}" {% if item.id in watched_items_ids %} checked {% endif %}>
+                                                            <label class="form-check-label" for="checkDefault">
+                                                                {{forloop.counter}}: <i class="bi bi-play-btn"></i> {{item.lesson.title}}
+                                                            </label>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            {% if item.lesson.note_file  %}
+                                                                <a href="{{item.lesson.note_file.url}}"><i class="bi bi-file-earmark-text fs-5"></i></a>
+                                                            {% endif %}
+                                                            <a href="{{item.lesson.video_file.url}}"><i class="bi bi-play-fill fs-3"></i></a>
+                                                        </div>
+                                                    </div>
+                                                        
                                                     {% else %}
-                                                        <p class="card-text">{{forloop.counter}}: <i class="bi bi-patch-question-fill"></i> Quiz</p> 
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input toggleWatched" type="checkbox" data-value="{{item.id}}" {% if item.id in watched_items_ids %} checked {% endif %}>
+                                                            <label class="form-check-label" for="checkDefault">
+                                                                {{forloop.counter}}: <i class="bi bi-patch-question-fill"></i> Quiz
+                                                            </label>
+                                                        </div>
+                                                        
+                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#fullscreenModal">
+                                                            Take Quiz    
+                                                        </button>
+
+                                                        <div class="modal fade" id="fullscreenModal" tabindex="-1">
+                                                            <div class="modal-dialog modal-fullscreen">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">QUIZ: Time to test your learning.</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body d-flex justify-content-center align-items-center">
+                                                                        <div class="row justify-content-center">
+                                                                            <div class="col-9 text-center">
+                                                                                <h5 class="modal-title fs-4 fw-bold">{{item.quiz.question}}</h5>
+                                                                            </div>
+                                                                            
+                                                                            <div class="col-9">
+                                                                                <div class="row justify-content-between g-3">
+                                                                                {% for option in item.quiz.quiz_options.all %}
+                                                                                    <div class="col-5 border border-dark">
+                                                                                        <input type="radio" name="quiz-{{item.quiz.id}}" class="quiz-option" data-is-correct="{{ option.is_correct|yesno:'true,false' }}">
+                                                                                        <span class="ps-2 fw-semibold">{{option.text}}</span>
+                                                                                    </div>
+                                                                                {% endfor %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <a href="{% url "course-details-view" course.id %}" class="btn btn-secondary">CLOSE</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     {% endif %}
                                                     
                                                     {% endfor %}
@@ -100,6 +157,83 @@
 
     </section>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkboxes = document.querySelectorAll(".toggleWatched");
+        
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener("change", function () {
+                    const isChecked = checkbox.checked;
+                    const value = checkbox.getAttribute("data-value");
+        
+                    fetch("/toggle-watched/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": getCookie("csrftoken")
+                        },
+                        body: JSON.stringify({
+                            checked: isChecked,
+                            value: value
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        popAlert(data);
+                    });
+                });
+            });
+        
+            // Helper to get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        cookie = cookie.trim();
+                        if (cookie.startsWith(name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const quizOptions = document.querySelectorAll('.quiz-option');
+
+    quizOptions.forEach(option => {
+        option.addEventListener('change', function () {
+            const name = this.name;
+            const group = document.querySelectorAll(`input[name="${name}"]`);
+
+            group.forEach(opt => {
+                const parent = opt.closest('.col-5');
+                parent.classList.remove('bg-success', 'bg-danger');
+                if (opt.checked) {
+                    if (opt.dataset.isCorrect === 'true') {
+                        parent.classList.add('bg-success'); // correct = green
+                    } else {
+                        parent.classList.add('bg-danger'); // incorrect = red
+                    }
+                } else {
+                    if (opt.dataset.isCorrect === 'true') {
+                        parent.classList.add('bg-success'); // show correct one anyway if needed
+                    } else {
+                        parent.classList.add('bg-danger');
+                    }
+                }
+            });
+        });
+    });
+});
+
+
+
+    </script>
+        
 
 </main>
 

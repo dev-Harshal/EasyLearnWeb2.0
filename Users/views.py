@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from Users.models import *
 from Course.models import *
+import json
 # Create your views here.
 
 def index_view(request):
@@ -125,8 +126,58 @@ def delete_user_view(request, user_id):
         messages.error(request, f'ERROR: {error}')
     else:
         return redirect(request.META.get('HTTP_REFERER'))
-    
 
 def course_detail_view(request, course_id):
     course = Course.objects.get(id=course_id)
-    return render(request, 'users/course_detail.html', context={'course':course})
+    sections = course.curriculum.sections.all()
+    
+    completed = False
+    course_items_id = CurriculumItem.objects.filter(section__curriculum__course__id=course_id).values_list('id', flat=True)
+    watched_items_id = WatchedContent.objects.filter(user=request.user, item__in=CurriculumItem.objects.filter(section__curriculum__course__id=course_id)).values_list('item__id', flat=True)
+    
+    if sorted(course_items_id) == sorted(watched_items_id):
+        completed = True
+    watched_items_ids = [int(x) for x in watched_items_id]
+    return render(request, 'users/course_detail.html', context={'course':course, 'completed':completed, 'watched_items_ids':watched_items_ids})
+
+def checkbox_action(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        item_id = data.get("value")
+        checked = data.get("checked")
+        print(item_id)
+        curriculum_item = CurriculumItem.objects.get(id=int(item_id))
+
+        if checked:
+            if not WatchedContent.objects.filter(user=request.user, item=curriculum_item).exists():    
+                WatchedContent.objects.create(user=request.user, item=curriculum_item)
+        else:
+            watched_content = WatchedContent.objects.get(user=request.user, item=curriculum_item)
+            watched_content.delete()
+        return JsonResponse({"status": "success", "message":""})
+    
+    return JsonResponse({"status": "error", "message":""}, status=400)
+
+def exam_view(request, course_id):
+    course = Course.objects.get(id=course_id)
+    if request.method == 'POST':
+        question_ids = request.POST.getlist('question_id[]')
+        obtained_total_marks = 0
+        result_status = 'Fail'
+        for question_id in question_ids:
+            answer_id = request.POST.get(f'question[answer][{question_id}]')
+            if answer_id:
+                answer = Answer.objects.get(id=answer_id)
+                if answer.is_correct:
+                    obtained_total_marks = obtained_total_marks + Question.objects.get(id=int(question_id)).mark
+
+        if obtained_total_marks >= (70 * 0.7):
+            result_status = 'Pass'
+            result = Result.objects.create(user=request.user, course=course, status=result_status, obtained_marks=int(obtained_total_marks))
+            messages.success(request, f'Congratulations you have successfully unlocked the Certification.')
+            return redirect('course-details-view', course_id=int(course.id))    
+
+        messages.error(request, f'Passing Criteria not fullfilled.Try Again.')
+        return redirect('course-details-view', course_id=int(course.id))    
+    return render(request, 'users/exam.html', context={'course':course})
+
