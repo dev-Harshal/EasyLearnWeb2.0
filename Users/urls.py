@@ -14,5 +14,6 @@ urlpatterns = [
     path('course/details/<int:course_id>/', course_detail_view, name='course-details-view'),
     path('toggle-watched/', checkbox_action, name='checkbox_action'),
     path('exam/<int:course_id>/',exam_view, name='exam-view'),
+    path('certificate/<int:course_id>/', generate_certificate, name='generate_certificate'),
     
 ]

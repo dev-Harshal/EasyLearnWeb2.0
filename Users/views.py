@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from Users.models import *
 from Course.models import *
 import json
+from django.shortcuts import get_object_or_404
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+
 # Create your views here.
 
 def index_view(request):
@@ -138,7 +142,12 @@ def course_detail_view(request, course_id):
     if sorted(course_items_id) == sorted(watched_items_id):
         completed = True
     watched_items_ids = [int(x) for x in watched_items_id]
-    return render(request, 'users/course_detail.html', context={'course':course, 'completed':completed, 'watched_items_ids':watched_items_ids})
+
+    certificate_status = "Locked"
+    if Result.objects.filter(user=request.user, course=course).exists():
+        certificate_status = "Unlocked"
+
+    return render(request, 'users/course_detail.html', context={'course':course, 'completed':completed, 'watched_items_ids':watched_items_ids, 'certificate_status':certificate_status})
 
 def checkbox_action(request):
     if request.method == "POST":
@@ -181,3 +190,86 @@ def exam_view(request, course_id):
         return redirect('course-details-view', course_id=int(course.id))    
     return render(request, 'users/exam.html', context={'course':course})
 
+def generate_certificate(request, course_id):
+    user = request.user
+    course = get_object_or_404(Course, id=course_id)
+
+    name = f'{user}'
+    course_title = course.title
+
+    # Massive canvas size for very large text
+    width, height = 2500, 1725  # Increased canvas size
+    img = Image.new('RGB', (width, height), color='#e6f0ff')
+    draw = ImageDraw.Draw(img)
+
+    # Load extremely large fonts
+    try:
+        # Giant font sizes
+        title_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 11000)  # 500px size
+        name_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 1050)    # 450px size
+        body_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 950)    # 350px size
+        footer_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 850)  # 250px size
+    except IOError:
+        # Fallback with the largest possible default fonts
+        title_font = ImageFont.load_default(size=50)
+        name_font = ImageFont.load_default(size=45)
+        body_font = ImageFont.load_default(size=35)
+        footer_font = ImageFont.load_default(size=25)
+
+    # Calculate total content height for vertical centering
+    content_elements = [
+        ("🎓 CERTIFICATE OF COMPLETION", title_font, '#005a9c'),
+        ("This is to certify that", body_font, 'black'),
+        (name, name_font, '#005a9c'),
+        ("has successfully completed the course", body_font, 'black'),
+        (course_title, name_font, '#005a9c')
+    ]
+    
+    total_content_height = 0
+    spacing = 150  # Space between elements
+    
+    # First pass to calculate total height
+    for text, font, _ in content_elements:
+        bbox = draw.textbbox((0, 0), text, font=font)
+        total_content_height += (bbox[3] - bbox[1]) + spacing
+    
+    # Remove extra spacing from last element
+    total_content_height -= spacing
+    
+    # Calculate starting Y position for vertical centering
+    start_y = (height - total_content_height) / 2
+
+    # Draw border
+    border_color = '#005a9c'
+    draw.rectangle([(80, 80), (width - 80, height - 80)], outline=border_color, width=40)
+
+    # Draw all centered content
+    current_y = start_y
+    
+    for text, font, color in content_elements:
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        x = (width - text_width) / 2
+        draw.text((x, current_y), text, font=font, fill=color)
+        current_y += text_height + spacing
+
+    # Draw footer at bottom (centered)
+    footer_text = "🎓 EASY LEARN | E-Learning Academy"
+    bbox = draw.textbbox((0, 0), footer_text, font=footer_font)
+    footer_width = bbox[2] - bbox[0]
+    footer_x = (width - footer_width) / 2
+    draw.text((footer_x, height - 300), footer_text, fill=border_color, font=footer_font)
+
+    # Save to buffer
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    if request.GET.get('download') == 'true':
+        response = HttpResponse(buffer.getvalue(), content_type='image/png')
+        response['Content-Disposition'] = f'attachment; filename=certificate_{course.id}.png'
+    else:
+        response = HttpResponse(buffer.getvalue(), content_type='image/png')
+
+    return response

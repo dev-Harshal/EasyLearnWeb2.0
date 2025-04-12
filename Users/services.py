@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate
 import random
 from django.utils import timezone
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 ROLE_CHOICES = (
     ('Admin', 'Admin'), 
@@ -42,7 +44,14 @@ def generate_otp_code(request, role):
         otp_code = str(random.randint(1000,9999))
         request.session['otp_code'] = otp_code
         request.session['otp_expiry'] = (timezone.now() + timezone.timedelta(seconds= 30)).timestamp()
-        print('OTP CODE: ',otp_code) #Replace with send Email.
+        print('OTP CODE: ',otp_code)
+        email = EmailMessage(
+            subject = 'Question Desk OTP',
+            body = f"OTP CODE:{otp_code}",
+            from_email=settings.EMAIL_HOST_USER,
+            to=[str(email)],
+        )
+        email.send()
         return {'status':'success', 'message':'OTP code send successfully.'}
     else:
         return {'status':'error', 'message':'Invalid email address or password.'}
