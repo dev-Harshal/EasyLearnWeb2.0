@@ -39,7 +39,7 @@
 
                                 <div class="d-flex justify-content-between">
                                     <a href="{% url "exam-view" course.id %}" class="btn btn-success{% if not completed %}disabled{% endif %}">EXAMINATION</a>
-                                    <a href="{% url 'generate_certificate' course.id %}?download=true" class="btn btn-primary {% if not Unlocked %}disabled{% endif %}">CERTIFICATE</a>
+                                    <a href="{% url 'generate_certificate' course.id %}?download=true" class="btn btn-primary {% if certificate_status != 'Unlocked' %} disabled {% endif %}">CERTIFICATE</a>
                                 </div>
                             </div>
 

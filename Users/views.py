@@ -12,7 +12,7 @@ from io import BytesIO
 # Create your views here.
 
 def index_view(request):
-    recent_courses = Course.objects.all().reverse()[:3]
+    recent_courses = Course.objects.all().reverse()
     context = {
         'recent_courses':recent_courses
     }
