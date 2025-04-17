@@ -132,22 +132,25 @@ def delete_user_view(request, user_id):
         return redirect(request.META.get('HTTP_REFERER'))
 
 def course_detail_view(request, course_id):
-    course = Course.objects.get(id=course_id)
-    sections = course.curriculum.sections.all()
+    if request.user.is_authenticated:
+        course = Course.objects.get(id=course_id)
+        sections = course.curriculum.sections.all()
     
-    completed = False
-    course_items_id = CurriculumItem.objects.filter(section__curriculum__course__id=course_id).values_list('id', flat=True)
-    watched_items_id = WatchedContent.objects.filter(user=request.user, item__in=CurriculumItem.objects.filter(section__curriculum__course__id=course_id)).values_list('item__id', flat=True)
-    
-    if sorted(course_items_id) == sorted(watched_items_id):
-        completed = True
-    watched_items_ids = [int(x) for x in watched_items_id]
+        completed = False
+        course_items_id = CurriculumItem.objects.filter(section__curriculum__course__id=course_id).values_list('id', flat=True)
+        watched_items_id = WatchedContent.objects.filter(user=request.user, item__in=CurriculumItem.objects.filter(section__curriculum__course__id=course_id)).values_list('item__id', flat=True)
+        
+        if sorted(course_items_id) == sorted(watched_items_id):
+            completed = True
+        watched_items_ids = [int(x) for x in watched_items_id]
 
-    certificate_status = "Locked"
-    if Result.objects.filter(user=request.user, course=course).exists():
-        certificate_status = "Unlocked"
+        certificate_status = "Locked"
+        if Result.objects.filter(user=request.user, course=course).exists():
+            certificate_status = "Unlocked"
 
-    return render(request, 'users/course_detail.html', context={'course':course, 'completed':completed, 'watched_items_ids':watched_items_ids, 'certificate_status':certificate_status})
+        return render(request, 'users/course_detail.html', context={'course':course, 'completed':completed, 'watched_items_ids':watched_items_ids, 'certificate_status':certificate_status})
+    else:
+        return redirect('login-view', role="Student")
 
 def checkbox_action(request):
     if request.method == "POST":
