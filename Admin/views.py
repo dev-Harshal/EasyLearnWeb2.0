@@ -2,10 +2,27 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib import messages
 from Users.models import *
+from Course.models import *
 # Create your views here.
 
 def index_view(request):
-    return render(request, 'admin/index.html')
+    total_teachers = User.objects.filter(role='Teacher').all().count()
+    total_students = User.objects.filter(role='Student').all().count()
+    total_courses = Course.objects.all().count()
+
+    recent_users = User.objects.all().reverse()[:5]
+    recent_courses = Course.objects.all().reverse()[:5]
+
+    context = {
+        "total_teachers":total_teachers,
+        "total_students":total_students,
+        "total_courses":total_courses,
+        "recent_users":recent_users,
+        "recent_courses":recent_courses
+
+    }
+
+    return render(request, 'admin/index.html', context=context)
 
 def profile_view(request):
     if request.method == 'POST':

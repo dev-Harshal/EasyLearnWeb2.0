@@ -2,10 +2,45 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib import messages
 from Users.models import *
+from Course.models import *
 # Create your views here.
 
 def index_view(request):
-    return render(request, 'teacher/index.html')
+    user_courses = Course.objects.filter(created_by=request.user).all()
+    total_courses = user_courses.count()
+    
+    total_videos = Lesson.objects.filter(
+        curriculum_item__section__curriculum__course__created_by=request.user
+    ).count()
+
+    total_notes = Lesson.objects.filter(
+        curriculum_item__section__curriculum__course__created_by=request.user,
+        note_file__isnull=False
+    ).exclude(note_file='').count()
+
+    total_quizzes = Quiz.objects.filter(
+        curriculum_item__section__curriculum__course__created_by=request.user
+    ).count()
+
+    unique_student_count = WatchedContent.objects.filter(
+        item__section__curriculum__course__created_by=request.user
+    ).values('user').distinct().count()
+
+
+    unique_result_students = Result.objects.filter(
+        course__created_by=request.user
+    ).values('user').distinct().count()
+
+    context = {
+        "total_courses":total_courses,
+        "total_videos":total_videos,
+        "total_notes":total_notes,
+        "total_quizzes":total_quizzes,
+        "unique_student_count":unique_student_count,
+        "unique_result_students":unique_result_students
+    }
+
+    return render(request, 'teacher/index.html', context=context)
 
 def profile_view(request):
     if request.method == 'POST':

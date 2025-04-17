@@ -8,6 +8,90 @@
 
         {% include "components/alert.html" %}
 
+        <section class="section">
+
+
+            <div class="pagetitle">
+                <h1>
+                    <i class="bi bi-speedometer2"></i>
+                    DASHBOARD
+                </h1>
+            </div>
+            
+            <div class="row">
+
+                <div class="col-4">
+
+                    <div class="card bg-danger-subtle rounded rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-dark fs-5">YOUR COURSES</h5>
+                            <span class="badge text-bg-light fs-5">{{total_courses}}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-4">
+
+                    <div class="card bg-primary-subtle rounded rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-dark fs-5">TOTAL VIDEOS</h5>
+                            <span class="badge text-bg-light fs-5">{{total_videos}}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-4">
+
+                    <div class="card bg-success-subtle rounded rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-dark fs-5">TOTAL NOTES</h5>
+                            <span class="badge text-bg-light fs-5">{{total_notes}}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-4">
+
+                    <div class="card bg-success-subtle rounded rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-dark fs-5">TOTAL QUIZZES</h5>
+                            <span class="badge text-bg-light fs-5">{{total_quizzes}}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-4">
+
+                    <div class="card bg-danger-subtle rounded rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-dark fs-5">UNIQUE VIEWS</h5>
+                            <span class="badge text-bg-light fs-5">{{unique_student_count}}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-4">
+
+                    <div class="card bg-primary-subtle rounded rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-dark fs-5">PASSED STUDENTS</h5>
+                            <span class="badge text-bg-light fs-5">{{unique_result_students}}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+        </section>
+
     </main>
 
 
